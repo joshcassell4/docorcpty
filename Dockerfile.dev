@@ -1,0 +1,40 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install system dependencies and development tools
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libc-dev \
+    git \
+    vim \
+    curl \
+    make \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Docker CLI for container management
+RUN curl -fsSL https://get.docker.com | sh
+
+# Install uv
+RUN pip install uv
+
+# Copy dependency files
+COPY pyproject.toml ./
+COPY README.md ./
+
+# Install dependencies including dev dependencies
+RUN uv pip install --system -e ".[dev]"
+
+# Create directories
+RUN mkdir -p /workspace /app/orchestrator /app/configs
+
+# Set environment for development
+ENV PYTHONUNBUFFERED=1
+ENV DEVELOPMENT=true
+
+# Install additional development tools
+RUN pip install ipython ipdb
+
+# Default command for development
+CMD ["uvicorn", "orchestrator.api.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

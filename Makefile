@@ -2,7 +2,9 @@
 SHELL := /bin/bash
 .PHONY: help install install-dev test test-unit test-integration test-coverage lint format type-check \
         run run-dev docker-build docker-up docker-down docker-logs clean setup-frontend \
-        frontend-install frontend-test frontend-build frontend-dev all-tests pre-commit
+        frontend-install frontend-test frontend-build frontend-dev all-tests pre-commit \
+        docker-dev docker-dev-build docker-dev-up docker-dev-down docker-dev-logs docker-dev-shell \
+        docker-dev-restart docker-dev-clean
 
 # Colors for output
 BLUE := \033[0;34m
@@ -108,6 +110,46 @@ docker-test: ## Run tests in Docker
 	@echo -e "${BLUE}Running tests in Docker...${NC}"
 	docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
 	docker-compose -f docker-compose.test.yml down
+
+# Docker Development Commands
+docker-dev: ## Start development environment in Docker containers
+	@echo -e "${BLUE}Starting containerized development environment...${NC}"
+	docker-compose -f docker-compose.dev.yml up --build
+
+docker-dev-build: ## Build development Docker images
+	@echo -e "${BLUE}Building development Docker images...${NC}"
+	docker-compose -f docker-compose.dev.yml build
+	@echo -e "${GREEN}Development images built successfully!${NC}"
+
+docker-dev-up: ## Start development containers in background
+	@echo -e "${BLUE}Starting development containers...${NC}"
+	docker-compose -f docker-compose.dev.yml up -d
+	@echo -e "${GREEN}Development environment is running!${NC}"
+	@echo -e "${GREEN}API: http://localhost:$(API_PORT)${NC}"
+	@echo -e "${GREEN}Dashboard: http://localhost:$(FRONTEND_PORT)${NC}"
+
+docker-dev-down: ## Stop development containers
+	@echo -e "${BLUE}Stopping development containers...${NC}"
+	docker-compose -f docker-compose.dev.yml down
+
+docker-dev-logs: ## View development container logs
+	docker-compose -f docker-compose.dev.yml logs -f
+
+docker-dev-shell: ## Open shell in development orchestrator container
+	docker-compose -f docker-compose.dev.yml exec orchestrator-dev /bin/bash
+
+docker-dev-restart: ## Restart development containers
+	@echo -e "${BLUE}Restarting development containers...${NC}"
+	docker-compose -f docker-compose.dev.yml restart
+
+docker-dev-clean: ## Remove development containers and volumes
+	@echo -e "${YELLOW}WARNING: This will remove all development containers and volumes!${NC}"
+	@read -p "Are you sure? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		docker-compose -f docker-compose.dev.yml down -v --remove-orphans; \
+		echo -e "${GREEN}Development environment cleaned!${NC}"; \
+	fi
 
 # Frontend Commands
 frontend-install: ## Install frontend dependencies

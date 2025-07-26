@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  orchestrator-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: cto-orchestrator-dev
+    volumes:
+      # Mount source code for hot-reloading
+      - ./orchestrator:/app/orchestrator
+      - ./configs:/app/configs
+      - ./.env:/app/.env
+      # Mount Docker socket for container management
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mount workspace for container data
+      - ./workspace:/workspace
+    ports:
+      - "8000:8000"
+    environment:
+      - DEVELOPMENT=true
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=DEBUG
+    networks:
+      - cto-network
+    stdin_open: true
+    tty: true
+    command: uvicorn orchestrator.api.app:app --host 0.0.0.0 --port 8000 --reload
+
+  dashboard-dev:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile.dev
+    container_name: cto-dashboard-dev
+    volumes:
+      # Mount source code for development
+      - ./dashboard/src:/app/src
+      - ./dashboard/public:/app/public
+      # Prevent node_modules from being overwritten
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:8000
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    networks:
+      - cto-network
+    depends_on:
+      - orchestrator-dev
+    command: npm start
+    stdin_open: true
+    tty: true
+
+  # Development database (optional)
+  postgres-dev:
+    image: postgres:15-alpine
+    container_name: cto-postgres-dev
+    environment:
+      POSTGRES_USER: cto_user
+      POSTGRES_PASSWORD: cto_password
+      POSTGRES_DB: cto_dev
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - cto-network
+
+  # Development Redis (optional)
+  redis-dev:
+    image: redis:7-alpine
+    container_name: cto-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - cto-network
+
+networks:
+  cto-network:
+    driver: bridge
+
+volumes:
+  postgres-dev-data:
+  node_modules:
