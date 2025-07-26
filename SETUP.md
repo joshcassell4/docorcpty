@@ -135,17 +135,21 @@ make frontend-build
 ### Using UV for Dependency Management
 
 ```bash
-# Add a new dependency
-uv add package-name
+# Install all dependencies (including dev)
+uv pip install -e ".[dev]"
 
-# Add development dependency
-uv add --dev package-name
+# Install production dependencies only
+uv pip install -e .
 
-# Update all dependencies
-uv sync
+# Add a new dependency to pyproject.toml then install
+# (Edit pyproject.toml manually, then run:)
+uv pip install -e .
 
-# Create lock file
-uv lock
+# Generate requirements.txt from pyproject.toml
+uv pip compile pyproject.toml -o requirements.txt
+
+# Generate requirements-dev.txt with dev dependencies
+uv pip compile pyproject.toml --extra dev -o requirements-dev.txt
 ```
 
 ## Docker Setup

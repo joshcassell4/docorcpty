@@ -24,12 +24,12 @@ help: ## Show this help message
 # Dependency Management
 install: ## Install production dependencies using uv
 	@echo -e "${BLUE}Installing production dependencies...${NC}"
-	uv pip sync
+	uv pip install -e .
 	@echo -e "${GREEN}Dependencies installed successfully!${NC}"
 
 install-dev: ## Install development dependencies using uv
 	@echo -e "${BLUE}Installing development dependencies...${NC}"
-	uv pip sync --dev
+	uv pip install -e ".[dev]"
 	@echo -e "${GREEN}Development dependencies installed successfully!${NC}"
 
 # Testing Commands

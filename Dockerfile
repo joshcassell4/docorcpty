@@ -12,10 +12,10 @@ RUN apt-get update && apt-get install -y \
 RUN pip install uv
 
 # Copy dependency files
-COPY pyproject.toml uv.lock* ./
+COPY pyproject.toml ./
 
 # Install dependencies using uv
-RUN uv pip sync --system
+RUN uv pip install --system -e .
 
 # Copy application code
 COPY orchestrator ./orchestrator
