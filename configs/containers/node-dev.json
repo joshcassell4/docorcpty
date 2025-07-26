@@ -1,0 +1,14 @@
+{
+  "name": "node-dev",
+  "image": "node:18-alpine",
+  "command": "/bin/sh",
+  "volumes": ["./workspace:/workspace"],
+  "environment": {
+    "NODE_ENV": "development"
+  },
+  "working_dir": "/workspace",
+  "resources": {
+    "memory": "512m",
+    "cpu_shares": 1024
+  }
+}

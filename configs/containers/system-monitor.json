@@ -1,0 +1,11 @@
+{
+  "name": "system-monitor",
+  "image": "alpine:latest",
+  "command": "/bin/sh",
+  "privileged": false,
+  "readonly": true,
+  "resources": {
+    "memory": "128m",
+    "cpu_shares": 256
+  }
+}

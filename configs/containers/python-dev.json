@@ -1,0 +1,15 @@
+{
+  "name": "python-dev",
+  "image": "python:3.9-slim",
+  "command": "/bin/bash",
+  "volumes": ["./workspace:/workspace"],
+  "environment": {
+    "PYTHONPATH": "/workspace",
+    "PYTHONUNBUFFERED": "1"
+  },
+  "working_dir": "/workspace",
+  "resources": {
+    "memory": "512m",
+    "cpu_shares": 1024
+  }
+}

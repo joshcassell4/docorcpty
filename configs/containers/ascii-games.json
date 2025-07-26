@@ -1,0 +1,12 @@
+{
+  "name": "ascii-games",
+  "image": "ubuntu:22.04",
+  "command": "/bin/bash",
+  "environment": {
+    "DEBIAN_FRONTEND": "noninteractive"
+  },
+  "resources": {
+    "memory": "256m",
+    "cpu_shares": 512
+  }
+}

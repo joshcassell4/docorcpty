@@ -1,0 +1,9 @@
+{
+  "api_host": "0.0.0.0",
+  "api_port": 8000,
+  "docker_socket": "/var/run/docker.sock",
+  "docker_network": "cto_network",
+  "max_sessions": 50,
+  "session_timeout": 3600,
+  "log_level": "INFO"
+}

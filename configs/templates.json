@@ -1,0 +1,22 @@
+{
+  "templates": {
+    "python-web": {
+      "base": "python-dev",
+      "packages": ["flask", "django", "fastapi"],
+      "ports": {"8000": 8000}
+    },
+    "node-web": {
+      "base": "node-dev",
+      "packages": ["express", "react", "vue"],
+      "ports": {"3000": 3000}
+    },
+    "database": {
+      "images": {
+        "postgres": "postgres:15-alpine",
+        "mysql": "mysql:8",
+        "redis": "redis:7-alpine",
+        "mongodb": "mongo:6"
+      }
+    }
+  }
+}

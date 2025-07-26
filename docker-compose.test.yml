@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    container_name: cto-test-runner
+    volumes:
+      - ./orchestrator:/app/orchestrator
+      - ./tests:/app/tests
+      - ./configs:/app/configs
+    environment:
+      - DOCKER_SOCKET=/var/run/docker.sock.mock
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - TESTING=true
+    command: pytest --cov=orchestrator --cov-report=term-missing
+    networks:
+      - cto_test_network
+
+networks:
+  cto_test_network:
+    driver: bridge
