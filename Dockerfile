@@ -11,8 +11,9 @@ RUN apt-get update && apt-get install -y \
 # Install uv
 RUN pip install uv
 
-# Copy dependency files
+# Copy dependency files and README (required by hatchling)
 COPY pyproject.toml ./
+COPY README.md ./
 
 # Install dependencies using uv
 RUN uv pip install --system -e .

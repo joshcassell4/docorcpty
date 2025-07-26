@@ -8,8 +8,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
-# Copy source code
-COPY . .
+# Copy source code (excluding node_modules via .dockerignore)
+COPY public ./public
+COPY src ./src
 
 # Build the app
 RUN npm run build

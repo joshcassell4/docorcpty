@@ -147,19 +147,16 @@ setup: install-dev frontend-install ## Complete development environment setup
 
 init-config: ## Initialize configuration files from examples
 	@echo -e "${BLUE}Initializing configuration files...${NC}"
-	@if [ ! -f .env ]; then cp .env.example .env; echo -e "${GREEN}Created .env file${NC}"; fi
-	@if [ ! -f configs/orchestrator.json ]; then mkdir -p configs && echo '{}' > configs/orchestrator.json; echo -e "${GREEN}Created orchestrator.json${NC}"; fi
+	@test -f .env || (cp .env.sample .env && echo -e "${GREEN}Created .env file${NC}")
+	@test -d configs || mkdir -p configs
+	@test -f configs/orchestrator.json || (echo {} > configs/orchestrator.json && echo -e "${GREEN}Created orchestrator.json${NC}")
 
 # Cleanup Commands
 clean: ## Clean build artifacts and cache
 	@echo -e "${BLUE}Cleaning build artifacts...${NC}"
-	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name "htmlcov" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".coverage" -exec rm -rf {} + 2>/dev/null || true
-	find . -type f -name "*.pyc" -delete 2>/dev/null || true
-	rm -rf dashboard/build dashboard/node_modules/.cache 2>/dev/null || true
+	@python -c "import shutil, os; [shutil.rmtree(os.path.join(r, d)) for r, dirs, _ in os.walk('.') for d in dirs if d in ['__pycache__', '.pytest_cache', '.mypy_cache', 'htmlcov', '.coverage']]" 2>/dev/null || true
+	@python -c "import os; [os.remove(os.path.join(r, f)) for r, _, files in os.walk('.') for f in files if f.endswith('.pyc')]" 2>/dev/null || true
+	@python -c "import shutil, os; [shutil.rmtree(p) if os.path.exists(p) else None for p in ['dashboard/build', 'dashboard/node_modules/.cache']]" 2>/dev/null || true
 	@echo -e "${GREEN}Cleanup complete!${NC}"
 
 clean-docker: ## Remove Docker containers and images
